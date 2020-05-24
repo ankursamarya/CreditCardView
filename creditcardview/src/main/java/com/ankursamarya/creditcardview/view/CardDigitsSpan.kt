@@ -6,7 +6,9 @@ import android.graphics.Paint.FontMetricsInt
 import android.text.style.ReplacementSpan
 import kotlin.math.roundToInt
 
-
+/*
+*make each char equal with and can also add space before them.
+*/
 class CardDigitsSpan(private val space: Boolean) : ReplacementSpan() {
     companion object {
         private val INPUT_CHARS = "X 1234567890"

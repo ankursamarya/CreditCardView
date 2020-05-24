@@ -7,7 +7,6 @@ import android.os.SystemClock
 import android.text.*
 import android.text.InputFilter.LengthFilter
 import android.util.AttributeSet
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
@@ -37,8 +36,14 @@ public class CreditCardView : FrameLayout, TextWatcher {
             defStyleRes: Int) : super(context, attrs, defStyleAttr, defStyleRes)
 
     private val binding: LayoutCardViewBinding
+    /**
+     * current selected card
+     * */
     private var selectedCard: Card = UnknownCard()
-    private var cardProvider : CardProvider = defaultCardProvider
+    /**
+     * provider for supported cards
+     * */
+    private var cardProvider: CardProvider = defaultCardProvider
     private var cardChangeListener: OnCardChangeListener? = null
 
     init {
@@ -76,7 +81,7 @@ public class CreditCardView : FrameLayout, TextWatcher {
         //ignore
     }
 
-    private fun onCardNumberChanged(editable: Editable?){
+    private fun onCardNumberChanged(editable: Editable?) {
         editable?.let {
             val newCard = cardProvider.getCardFromNumber(it.toString())
             if (newCard != selectedCard) {
@@ -88,6 +93,9 @@ public class CreditCardView : FrameLayout, TextWatcher {
         }
     }
 
+    /**
+     * placeholder/hint for card digit accodring Card type like XXXX XXXX XXXX XXXX
+     * */
     private fun setNumberHint() {
         val spannableString = SpannableString(selectedCard.getNumberHint());
         spannableString.setSpan(CardDigitsSpan(false), 0, spannableString.length,
@@ -95,19 +103,25 @@ public class CreditCardView : FrameLayout, TextWatcher {
         binding.cardNumHint.setText(spannableString, TextView.BufferType.SPANNABLE)
     }
 
+    /**
+     * set card icon
+     * */
     private fun setCardIcon() {
         binding.cardIcon.setImageDrawable(ContextCompat.getDrawable(context, selectedCard.cardIcon))
     }
 
+    /**
+     * for invalid and unsupported card sets error
+     * */
     private fun showError(count: Int) {
-        Log.d("TAG", "")
         val show = selectedCard.maxCardLength == count && !selectedCard.validate(getCardNumber())
-        Log.d("TAG", show.toString())
         binding.errorText.visibility = if (show) View.VISIBLE else View.GONE
     }
 
+    /**
+     * formats the card digit accodring Card type like 1111 1111 1111 1111
+     * */
     private fun formatCardNumber(editable: Editable) {
-
         val paddingSpans: Array<CardDigitsSpan> =
             editable.getSpans(0, editable.length, CardDigitsSpan::class.java)
         for (span in paddingSpans) {
@@ -128,10 +142,16 @@ public class CreditCardView : FrameLayout, TextWatcher {
         setMaxLength()
     }
 
+    /**
+     * sets max character in EditText on selected card change.
+     * */
     private fun setMaxLength() {
         binding.cardNum.setFilters(arrayOf<InputFilter>(LengthFilter(selectedCard.maxCardLength)))
     }
 
+    /**
+     * To open soft keyboard when screen opens or when user click on CardEditText
+     * */
     private fun showSoftKeyboard() {
         Handler(Looper.getMainLooper()).postDelayed({
             binding.cardNum.dispatchTouchEvent(MotionEvent.obtain(SystemClock.uptimeMillis(),
@@ -157,12 +177,12 @@ public class CreditCardView : FrameLayout, TextWatcher {
         return selectedCard
     }
 
-    fun setCardProvider(cardProvider: CardProvider){
+    fun setCardProvider(cardProvider: CardProvider) {
         this.cardProvider = cardProvider
         onCardNumberChanged(binding.cardNum.text)
     }
 
-    fun setCardChangeListener(listener: OnCardChangeListener){
+    fun setCardChangeListener(listener: OnCardChangeListener) {
         cardChangeListener = listener
     }
 

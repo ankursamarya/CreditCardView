@@ -7,6 +7,7 @@
     tools:context=".MainActivity">
 
     <com.ankursamarya.creditcardview.view.CreditCardView
+        android:id="@+id/card_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/dimen_4dp" />
