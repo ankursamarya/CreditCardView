@@ -1,0 +1,3 @@
+rootProject.name='CrediCard'
+include ':app'
+include ':creditcardview'
